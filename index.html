@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<style>
+
+    body {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        row-gap: 20px;
+    }
+
+    .table {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 670px;
+    }
+
+    .col {
+        border: 1px solid black;
+        padding: 5px 10px;
+        width: 200px;
+    }
+
+</style>
+
+<script>
+
+    const users = fetch('https://jsonplaceholder.typicode.com/users').then(res => res.json()).then(users => {
+        users.map(user => {
+            const table = document.getElementById('table')
+            const row = document.createElement('div')
+            row.className = 'row'
+            row.id = `row_${user.id}`
+            for (let i = 0; i < 3; i++) {
+                const cube = document.createElement('div')
+                cube.className = 'col'
+                switch (i) {
+                    case 0:
+                        cube.textContent = user.name
+                        cube.id = 'name'
+                        break
+                    case 1:
+                        cube.textContent = user.email
+                        cube.id = 'email'
+                        break
+                    case 2:
+                        cube.textContent = user.username
+                        cube.id = 'username'
+
+
+                }
+                row.appendChild(cube)
+            }
+            table.appendChild(row)
+
+            const userClicked = document.getElementById(`row_${user.id}`)
+
+
+            let clicked = false
+            userClicked.firstChild.addEventListener('click', function () {
+                const userClickedTable = document.getElementById(`table_${user.id}`)
+                clicked = !clicked
+                if (!clicked) {
+                    userClickedTable.remove()
+                } else {
+                    fetch(`https://jsonplaceholder.typicode.com/posts?userId=${user.id}`).then(res => res.json()).then(posts => {
+                        const arr = ['post id', 'user id']
+                        const table = document.createElement('div')
+                        table.className = 'table'
+                        table.id = `table_${user.id}`
+                        const row = document.createElement('div')
+                        row.className = 'row'
+                        row.style.padding = '10px'
+                        arr.map(text => {
+                            const col = document.createElement('div')
+                            col.className = 'col'
+                            col.textContent = text
+                            row.appendChild(col)
+                            table.appendChild(row)
+                            userClicked.appendChild(table)
+                        })
+                        posts.map(post => {
+                            for (let i = 0; i < 2; i++) {
+                                const col = document.createElement('div')
+                                col.className = 'col'
+                                switch (i) {
+                                    case 0:
+                                        col.textContent = post.id
+                                        break
+                                    case 1:
+                                        col.textContent = post.userId
+
+                                }
+                                row.appendChild(col)
+                            }
+                            table.appendChild(row)
+                            userClicked.appendChild(table)
+                        })
+                    })
+                }
+
+
+            })
+        })
+    })
+
+
+</script>
+
+<body>
+
+<div> HI THERE</div>
+
+<div class="table" id="table">
+    <div class="row">
+        <div class="col">Name</div>
+        <div class="col">Email</div>
+        <div class="col">Website</div>
+    </div>
+</div>
+
+
+</body>
+</html>
